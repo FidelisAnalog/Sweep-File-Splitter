@@ -51,7 +51,7 @@ def plot_signal(
         plt.axvline(x=detected_end_time, color="g", linestyle="--", label="Detected End")
 
     if peaks is not None:
-        plt.plot(time[peaks], signal[peaks], "x", label="Peaks")
+        plt.plot(time[peaks], signal[peaks], "darkorange", label="Peaks")
 
     plt.title(title)
     plt.xlabel("Time (s)")
@@ -170,7 +170,7 @@ def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, 
 def slice_audio(input_file, test_record):
     # Test record parameters
     record_params = {
-        'TRS1007': {'sweep_offset': 74, 'sweep_end_min': 47, 'sweep_end_max': 55},
+        'TRS1007': {'sweep_offset': 74, 'sweep_end_min': 48, 'sweep_end_max': 52},
         'TRS1005': {'sweep_offset': 36, 'sweep_end_min': 30, 'sweep_end_max': 38},
         'STR100': {'sweep_offset': 74, 'sweep_end_min': 61, 'sweep_end_max': 69},
     }
