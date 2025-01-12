@@ -41,9 +41,9 @@ def apply_bandpass(signal, low, high, Fs, order=17):
     return sosfiltfilt(sos, signal)
 
 
-def find_end_of_burst(filtered_signal, Fs, threshold=0.01, lower_border=40, upper_border=50, consecutive_in_borders=10, shift_size=12, shiftings=3):
+def find_end_of_burst(signal, Fs, threshold=0.01, lower_border=40, upper_border=50, consecutive_in_borders=10, shift_size=12, shiftings=3):
     # Detect peaks with constraints on minimum distance
-    peaks, _ = find_peaks(filtered_signal, height=threshold, distance=lower_border)
+    peaks, _ = find_peaks(signal, height=threshold, distance=lower_border)
     logging.debug(f"Peaks Found: {len(peaks)}")
 
     # Find valid sequences of peak spacing
@@ -56,11 +56,11 @@ def find_end_of_burst(filtered_signal, Fs, threshold=0.01, lower_border=40, uppe
     logging.debug(f"Start Index: {start_sample}")
     
     # Define burst region
-    is_ = int(start_sample + (1 * Fs))
-    ie = int(start_sample + (12 * Fs))
+    is_ = int(start_sample + (1 * Fs))  # Start 1s after the first peak
+    ie = int(start_sample + (12 * Fs))  # End 12s after
 
     # Extract and smooth burst region
-    cut_burst = filtered_signal[is_:ie]
+    cut_burst = signal[is_:ie]
     cut_burst = uniform_filter1d(cut_burst, size=shift_size * shiftings)
 
     # Normalize and find burst end
