@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
 
 # User Parameters
 INPUT_FILE = '20241022-T004_V15VMR_47k_305pF_10074A1.wav'
-TEST_RECORD = 'TRS1007'  # Options: TRS1007, TRS1005, STR100
+TEST_RECORD = 'TRS1007'  # Options: TRS1007, STR100
 
 
 # Rotation Helper
@@ -94,7 +94,6 @@ def slice_audio(input_file, test_record):
     # Test record parameters
     record_params = {
         'TRS1007': {'sweep_offset': 74, 'sweep_end_min': 47, 'sweep_end_max': 55},
-        'TRS1005': {'sweep_offset': 36, 'sweep_end_min': 30, 'sweep_end_max': 38},
         'STR100': {'sweep_offset': 74, 'sweep_end_min': 61, 'sweep_end_max': 69},
     }
 
