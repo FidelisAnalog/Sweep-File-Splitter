@@ -8,7 +8,14 @@ import matplotlib.pyplot as plt
 
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.INFO)
+fh = logging.StreamHandler()
+fh_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(fh_formatter)
+logger.addHandler(fh)
+logger.propagate = False
+
 
 # User Parameters
 INPUT_FILE = '20241022-T004_V15VMR_47k_305pF_10074A1.wav'
@@ -51,7 +58,6 @@ def plot_signal(
     plt.show()
 
 
-
 # Rotation Helper
 def rotate_left(y_in, nd):
     return np.concatenate((y_in[nd:], y_in[:nd]))
@@ -61,7 +67,7 @@ def rotate_left(y_in, nd):
 def read_measurement(input_file):
     logging.info(f"Reading: {input_file}")
     Fs, y = read(input_file)
-    logging.info(f"Sample Rate: {Fs}")
+    logger.info(f"Sample Rate: {Fs}")
     if y.ndim < 2:
         raise ValueError("Input file must have at least two channels.")
     return y[:, 0], y[:, 1], Fs
@@ -82,10 +88,8 @@ def apply_bandpass(signal, low, high, Fs, order=17):
 def find_end_of_burst(signal, Fs, threshold=0.01, lower_border=40, upper_border=50, consecutive_in_borders=10, shift_size=12, shiftings=3):
     # Detect peaks with constraints on minimum distance
     peaks, _ = find_peaks(signal, height=threshold, distance=lower_border)
-    logging.debug(f"Peaks Found: {len(peaks)}")
+    logger.debug(f"Peaks Found: {len(peaks)}")
 
-
-        
     # Find valid sequences of peak spacing
     valid_diffs = (lower_border <= np.diff(peaks)) & (np.diff(peaks) <= upper_border)
     start_index = np.argmax(np.convolve(valid_diffs, np.ones(consecutive_in_borders, dtype=int), mode='valid') == consecutive_in_borders)
@@ -93,7 +97,7 @@ def find_end_of_burst(signal, Fs, threshold=0.01, lower_border=40, upper_border=
         raise ValueError("No valid burst found")
 
     start_sample = peaks[start_index]
-    logging.debug(f"Start Index: {start_sample}")
+    logger.debug(f"Start Index: {start_sample}")
     
     # Define burst region
     is_ = int(start_sample + (1 * Fs))  # Start 1s after the first peak
@@ -109,7 +113,7 @@ def find_end_of_burst(signal, Fs, threshold=0.01, lower_border=40, upper_border=
 
     end_sample = is_ + burst_end
 
-    if logging.getLogger().isEnabledFor(logging.DEBUG):
+    if logging.getLogger(__name__).isEnabledFor(logging.DEBUG):
         plot_signal(
             signal,
             Fs,
@@ -122,14 +126,13 @@ def find_end_of_burst(signal, Fs, threshold=0.01, lower_border=40, upper_border=
     return end_sample
 
 
-
 def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, Fs, threshold=0.05, shiftings=6):
     sample_offset_start = sweep_start_sample + int(Fs * sweep_end_min)
     sample_offset_end = sweep_start_sample + int(Fs * sweep_end_max)
     signal = signal[sample_offset_start:sample_offset_end]
     original_signal = signal
 
-    logging.debug(f"Length of End Window: {len(signal)}")
+    logger.debug(f"Length of End Window: {len(signal)}")
 
     # Filter a bit by shifting and adding
     shiftings = 6
@@ -143,11 +146,11 @@ def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, 
     signal = np.diff(signal)
     end_sample = np.argmax(signal) + sample_offset_start
 
-    logging.debug(f"End Sample (Global Index): {end_sample}")
-    logging.debug(f"Sample Offset Start: {sample_offset_start}, Sample Offset End: {sample_offset_end}")
-    logging.debug(f"End Sample (Relative Index): {end_sample - sample_offset_start}")
+    logger.debug(f"End Sample (Global Index): {end_sample}")
+    logger.debug(f"Sample Offset Start: {sample_offset_start}, Sample Offset End: {sample_offset_end}")
+    logger.debug(f"End Sample (Relative Index): {end_sample - sample_offset_start}")
 
-    if logging.getLogger().isEnabledFor(logging.DEBUG):
+    if logging.getLogger(__name__).isEnabledFor(logging.DEBUG):
         plot_signal(
             original_signal,
             Fs,
@@ -157,7 +160,6 @@ def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, 
         )
 
     return end_sample
-
 
 
 # Main Processing Function
@@ -177,7 +179,7 @@ def slice_audio(input_file, test_record):
     # Read input file
     left, right, Fs = read_measurement(input_file)
 
-    logging.info(f"Test Record: {test_record}")
+    logger.info(f"Test Record: {test_record}")
 
     # Filter and maximize for end of pilot detection
     left_filtered = apply_bandpass(left, 500, 2000, Fs)
@@ -185,12 +187,12 @@ def slice_audio(input_file, test_record):
 
     # Find end of first pilot tone
     start_left_sweep = find_end_of_burst(left_normalized, Fs)
-    logging.info(f"Start of Left Sweep: {start_left_sweep}")
+    logger.info(f"Start of Left Sweep: {start_left_sweep}")
 
     # Find end of second pilot tone
     sample_offset = start_left_sweep + int(Fs * params['sweep_offset'])
     start_right_sweep = sample_offset + find_end_of_burst(left_normalized[sample_offset:], Fs)
-    logging.info(f"Start of Right Sweep: {start_right_sweep}")
+    logger.info(f"Start of Right Sweep: {start_right_sweep}")
 
     # Filter and maximize for end of left sweep detection
     left_filtered = apply_bandpass(left, 10000, 40000, Fs)
@@ -198,7 +200,7 @@ def slice_audio(input_file, test_record):
 
     # Find end of left sweep
     end_left_sweep = find_end_of_sweep(start_left_sweep, params['sweep_end_min'], params['sweep_end_max'], left_normalized, Fs)
-    logging.info(f"End of Left Sweep: {end_left_sweep}")
+    logger.info(f"End of Left Sweep: {end_left_sweep}")
 
     # Filter and maximize for end of right sweep detection
     right_filtered = apply_bandpass(right, 10000, 40000, Fs)
@@ -206,28 +208,26 @@ def slice_audio(input_file, test_record):
 
     # Find end of right sweep
     end_right_sweep = find_end_of_sweep(start_right_sweep, params['sweep_end_min'], params['sweep_end_max'], right_normalized, Fs)
-    logging.info(f"End of Right Sweep: {end_right_sweep}")
+    logger.info(f"End of Right Sweep: {end_right_sweep}")
 
-    logging.info(f"Left Sweep Duration: {(end_left_sweep-start_left_sweep)/Fs}")
-    logging.info(f"Right Sweep Duration: {(end_right_sweep-start_right_sweep)/Fs}")
+    logger.info(f"Left Sweep Duration: {(end_left_sweep-start_left_sweep)/Fs}")
+    logger.info(f"Right Sweep Duration: {(end_right_sweep-start_right_sweep)/Fs}")
 
-    if logging.getLogger().isEnabledFor(logging.DEBUG):
+    if logging.getLogger(__name__).isEnabledFor(logging.DEBUG):
         plot_signal(left[start_left_sweep:end_left_sweep], Fs, title="Left Sweep Segment")
         plot_signal(right[start_right_sweep:end_right_sweep], Fs, title="Right Sweep Segment")
 
-    
     # Write results
     output_file_left = os.path.splitext(input_file)[0] + '_L.wav'
     output_file_right = os.path.splitext(input_file)[0] + '_R.wav'
 
-    logging.info(f"Writing {output_file_left}")
+    logger.info(f"Writing {output_file_left}")
     write_result(output_file_left, left, right, Fs, start_left_sweep, end_left_sweep)
 
-    logging.info(f"Writing {output_file_right}")
+    logger.info(f"Writing {output_file_right}")
     write_result(output_file_right, right, left, Fs, start_right_sweep, end_right_sweep)
     
-    logging.info("Processing Complete.")
-
+    logger.info("Processing Complete.")
 
 
 # Execute Main Script
