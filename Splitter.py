@@ -124,7 +124,7 @@ def find_end_of_burst(signal, Fs, threshold=0.01, lower_border=40, upper_border=
             threshold=threshold,
             detected_end_time=(end_sample / Fs),
             detected_start_time=(start_sample /Fs),
-            title="Burst End Detection"
+            title="Burst Detection"
         )
 
     return end_sample
