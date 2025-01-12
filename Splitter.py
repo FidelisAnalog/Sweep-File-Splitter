@@ -204,6 +204,8 @@ def slice_audio(input_file, test_record):
     end_right_sweep = find_end_of_sweep(start_right_sweep, params['sweep_end_min'], params['sweep_end_max'], right_normalized, Fs)
     logging.info(f"End of Right Sweep: {end_right_sweep}")
 
+    logging.info(f"Left Sweep Duration: {(end_left_sweep-start_left_sweep)/Fs}")
+    logging.info(f"Right Sweep Duration: {(end_right_sweep-start_right_sweep)/Fs}")
     
     if logging.getLogger().isEnabledFor(logging.DEBUG):
         plot_signal(left[start_left_sweep:end_left_sweep], Fs, title="Left Sweep Segment")
