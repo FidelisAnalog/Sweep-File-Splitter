@@ -29,7 +29,7 @@ def plot_signal(
     normalized_signal=None,
     threshold=None,
     detected_end_time=None,
-    original_end_time=None,
+    detected_start_time=None,
     peaks=None,
     title="Signal Visualization",
 ):
@@ -43,6 +43,9 @@ def plot_signal(
 
     if threshold is not None:
         plt.axhline(y=threshold, color="r", linestyle="--", label=f"Threshold = {threshold}")
+
+    if detected_start_time is not None:
+        plt.axvline(x=detected_start_time, color="b", linestyle="--", label="Detected Start")
 
     if detected_end_time is not None:
         plt.axvline(x=detected_end_time, color="g", linestyle="--", label="Detected End")
@@ -120,6 +123,7 @@ def find_end_of_burst(signal, Fs, threshold=0.01, lower_border=40, upper_border=
             peaks=peaks,
             threshold=threshold,
             detected_end_time=(end_sample / Fs),
+            detected_start_time=(start_sample /Fs),
             title="Burst End Detection"
         )
 
@@ -217,6 +221,7 @@ def slice_audio(input_file, test_record):
         plot_signal(left[start_left_sweep:end_left_sweep], Fs, title="Left Sweep Segment")
         plot_signal(right[start_right_sweep:end_right_sweep], Fs, title="Right Sweep Segment")
 
+    
     # Write results
     output_file_left = os.path.splitext(input_file)[0] + '_L.wav'
     output_file_right = os.path.splitext(input_file)[0] + '_R.wav'
