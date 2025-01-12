@@ -19,7 +19,6 @@ logger.propagate = False
 
 # User Parameters
 INPUT_FILE = '20241022-T004_V15VMR_47k_305pF_10074A1.wav'
-INPUT_FILE = 'STR100.wav'
 TEST_RECORD = 'STR100'  # Options: TRS1007, TRS1005, STR100
 
 
