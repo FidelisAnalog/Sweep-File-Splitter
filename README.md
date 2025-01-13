@@ -80,7 +80,8 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 <br/>
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_1.png" alt="Example Plot.">
-    <p><b>Figure 1 - First Burst Detection Pass:,</b> to identify the end of the 1kHz pilot tone.</p>
+    <p><b>Figure 1 - First Burst Detection Pass</b></p>
+    <p>Used to find the end of the first 1kHz pilot tone. In most cases this is also the start of the sweep.</p>
 </div>
 <br/>
 
