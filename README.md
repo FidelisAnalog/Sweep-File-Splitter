@@ -161,7 +161,7 @@ Purpose: This visualization allows you to verify that the extracted segments cor
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_8.png" alt="Figure 8 - Extracted Sweep Segment: Right Channel">
     <p><b>Figure 8 - Extracted Sweep Segment: Right Channel</b></p>
-    <p>This is a waveform visualization of the extracted sweep segment for the reft channel.</p>
+    <p>This is a waveform visualization of the extracted sweep segment for the right channel.</p>
 </div>
 <br/>
 
