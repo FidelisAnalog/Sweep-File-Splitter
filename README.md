@@ -76,11 +76,10 @@ Key Features:
 Purpose: This helps confirm that the burst detection algorithm correctly identifies the expected signal region.
 
 #### Examples
-
 <br/>
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_1.png" alt="Example Plot.">
-    <p><b>Figure 1 - First Burst Detection Pass - Left Channel</b></p>
+    <p><b>Figure 1 - First Burst Detection Pass: Left Channel</b></p>
     <p>Used to find the end of the first 1kHz pilot tone. In most cases this is also the start of the sweep.</p>
 </div>
 <br/>
@@ -88,7 +87,7 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 <br/>
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_2.png" alt="Example Plot.">
-    <p><b>Figure 2 - Optional Sweep Start Detection Pass - Left Channel</b></p>
+    <p><b>Figure 2 - Optional Sweep Start Detection Pass: Left Channel</b></p>
     <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep. This detection window begins one second after the detected end of the pilot tone.</p>
 </div>
 <br/>
@@ -96,7 +95,7 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 <br/>
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_3.png" alt="Example Plot.">
-    <p><b>Figure 3 - Second Burst Detection Pass - Right Channel</b></p>
+    <p><b>Figure 3 - Second Burst Detection Pass: Right Channel</b></p>
     <p>Used to find the end of the second 1kHz pilot tone. In most cases this is also the start of the sweep. The start of this detection window is however many seconds "sweep_offset" is configured for from the end of the first pilot tone.</p>
 </div>
 <br/>
@@ -104,8 +103,8 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 <br/>
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_4.png" alt="Example Plot.">
-    <p><b>Figure 4 - Optional Sweep Start Detection Pass - Left Channel</b></p>
-    <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep. This detection window begins one second after the detected end of the pilot tone.</p>
+    <p><b>Figure 4 - Optional Sweep Start Detection Pass: Right Channel</b></p>
+    <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep. This detection window begins one second after the detected end of the second pilot tone.</p>
 </div>
 <br/>
 
@@ -120,6 +119,23 @@ Key Features:
 - Detected End Time: A vertical line indicating the sample where the sweep ends.
 
 Purpose: This visualization ensures the end-of-sweep detection algorithm identifies the correct time based on the threshold and signal behavior.
+
+#### Examples
+<br/>
+<div align="center" style="padding: 20px 0;">
+    <img src="images/Figure_5.png" alt="Example Plot.">
+    <p><b>Figure 5 - First End of Sweep Detection Pass: Left Channel</b></p>
+    <p>Used to find the end of the left channel sweep.  The distance and duration of this detection window are set by the variables "seep_end_min" and "sweep_end_max".</p>
+</div>
+<br/>
+
+<br/>
+<div align="center" style="padding: 20px 0;">
+    <img src="images/Figure_5.png" alt="Example Plot.">
+    <p><b>Figure 5 - First End of Sweep Detection Pass: Right Channel</b></p>
+    <p>Used to find the end of the right channel sweep.  The distance and duration of this detection window are set by the variables "seep_end_min" and "sweep_end_max".</p>
+</div>
+<br/>
 
 ### Segment Visualization
 Where: At the end of slice_audio
