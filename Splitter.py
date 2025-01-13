@@ -93,9 +93,9 @@ def apply_filter(signal, low, high, Fs, order=17, btype='band'):
     return sosfiltfilt(sos, signal)
 
 
-def find_burst_bounds(signal, Fs, threshold=0.02, lower_border=40, upper_border=50, consecutive_in_borders=10, shift_size=12, shiftings=3):
+def find_burst_bounds(signal, Fs, lower_border, upper_border, consecutive_in_borders=10, threshold=0.02, shift_size=12, shiftings=3):
     # Detect peaks with constraints on minimum distance
-    peaks, _ = find_peaks(signal, height=threshold, distance=lower_border)
+    peaks, _ = find_peaks(signal, height=threshold, distance=lower_border)#prominence=.5)
     logger.debug(f"Peaks Found: {len(peaks)}")
 
     # Find valid sequences of peak spacing
@@ -189,16 +189,19 @@ def slice_audio(input_file, test_record):
 
     logger.info(f"Test Record: {test_record}")
 
+    lower_border = int(Fs/2400)
+    upper_border = int(Fs/1200)
+
     # Filter and maximize for end of left pilot detection
     left_filtered = apply_filter(left, 500, 2000, Fs, btype='band')
     left_normalized = np.abs(left_filtered) / np.max(np.abs(left_filtered))
 
     # Find end of left pilot tone / start of sweep
-    _, start_left_sweep = find_burst_bounds(left_normalized, Fs)
+    _, start_left_sweep = find_burst_bounds(left_normalized, Fs, lower_border, upper_border)
 
     if params['sweep_start_detect'] == 1:
         sample_offset = start_left_sweep + Fs
-        start_left_sweep, _ = sample_offset + find_burst_bounds(left_normalized[sample_offset:], Fs)
+        start_left_sweep, _ = sample_offset + find_burst_bounds(left_normalized[sample_offset:], Fs, lower_border, upper_border)
 
     logger.info(f"Start of Left Sweep: {start_left_sweep}")
 
@@ -208,11 +211,11 @@ def slice_audio(input_file, test_record):
 
     # Find end of left pilot tone / start of sweep
     sample_offset = start_left_sweep + int(Fs * params['sweep_offset'])
-    _, start_right_sweep = sample_offset + find_burst_bounds(right_normalized[sample_offset:], Fs)
+    _, start_right_sweep = sample_offset + find_burst_bounds(right_normalized[sample_offset:], Fs, lower_border, upper_border)
 
     if params['sweep_start_detect'] == 1:
         sample_offset = start_right_sweep + Fs
-        start_right_sweep, _ = sample_offset + find_burst_bounds(right_normalized[sample_offset:], Fs)
+        start_right_sweep, _ = sample_offset + find_burst_bounds(right_normalized[sample_offset:], Fs, lower_border, upper_border)
 
     logger.info(f"Start of Right Sweep: {start_right_sweep}")
 
@@ -255,3 +258,4 @@ def slice_audio(input_file, test_record):
 # Execute Main Script
 if __name__ == "__main__":
     slice_audio(INPUT_FILE, TEST_RECORD)
+
