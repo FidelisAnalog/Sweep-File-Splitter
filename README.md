@@ -85,6 +85,14 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 </div>
 <br/>
 
+<br/>
+<div align="center" style="padding: 20px 0;">
+    <img src="images/Figure_2.png" alt="Example Plot.">
+    <p><b>Figure 2 - Optional Sweep Start Detection Pass</b></p>
+    <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep.</p>
+</div>
+<br/>
+
 ### Sweep End Detection Visualization
 Where: find_end_of_sweep
 
