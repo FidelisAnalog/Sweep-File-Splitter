@@ -19,7 +19,7 @@ logger.propagate = False
 
 # User Parameters
 INPUT_FILE = '20241022-T004_V15VMR_47k_305pF_10074A1.wav'
-TEST_RECORD = 'STR100'  # Options: TRS1007, TRS1005, STR100
+TEST_RECORD = 'TRS1007'  # Options: TRS1007, TRS1005, STR100
 
 
 # Debug signal plots
@@ -82,13 +82,18 @@ def write_result(output_file, left, right, Fs, start_index, end_index):
     write(output_file, Fs, y)
 
 
-# Bandpass Filter
-def apply_bandpass(signal, low, high, Fs, order=17):
-    sos = iirfilter(order, [low, high], rs=140, btype='band', analog=False, ftype='cheby2', fs=Fs, output='sos')
+# Filter
+def apply_filter(signal, low, high, Fs, order=17, btype='band'):
+    if btype == 'band':
+        sos = iirfilter(order, [low, high], rs=140, btype='band', analog=False, ftype='cheby2', fs=Fs, output='sos')
+        
+    elif btype == 'high':
+        sos = iirfilter(order, high, rs=140, btype='highpass', analog=False, ftype='cheby2', fs=Fs, output='sos')
+
     return sosfiltfilt(sos, signal)
 
 
-def find_end_of_burst(signal, Fs, threshold=0.02, lower_border=40, upper_border=50, consecutive_in_borders=10, shift_size=12, shiftings=3):
+def find_burst_bounds(signal, Fs, threshold=0.02, lower_border=40, upper_border=50, consecutive_in_borders=10, shift_size=12, shiftings=3):
     # Detect peaks with constraints on minimum distance
     peaks, _ = find_peaks(signal, height=threshold, distance=lower_border)
     logger.debug(f"Peaks Found: {len(peaks)}")
@@ -127,7 +132,7 @@ def find_end_of_burst(signal, Fs, threshold=0.02, lower_border=40, upper_border=
             title="Burst Detection"
         )
 
-    return end_sample
+    return start_sample, end_sample
 
 
 def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, Fs, threshold=0.05, shiftings=6):
@@ -169,9 +174,9 @@ def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, 
 def slice_audio(input_file, test_record):
     # Test record parameters
     record_params = {
-        'TRS1007': {'sweep_offset': 74, 'sweep_end_min': 48, 'sweep_end_max': 52},
-        'TRS1005': {'sweep_offset': 36, 'sweep_end_min': 30, 'sweep_end_max': 38},
-        'STR100': {'sweep_offset': 74, 'sweep_end_min': 63, 'sweep_end_max': 67},
+        'TRS1007': {'sweep_offset': 74, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
+        'TRS1005': {'sweep_offset': 32, 'sweep_end_min': 26, 'sweep_end_max': 34, 'sweep_start_detect': 1},
+        'STR100': {'sweep_offset': 74, 'sweep_end_min': 63, 'sweep_end_max': 67, 'sweep_start_detect': 0},
     }
 
     if test_record not in record_params:
@@ -185,24 +190,34 @@ def slice_audio(input_file, test_record):
     logger.info(f"Test Record: {test_record}")
 
     # Filter and maximize for end of left pilot detection
-    left_filtered = apply_bandpass(left, 500, 2000, Fs)
+    left_filtered = apply_filter(left, 500, 2000, Fs, btype='band')
     left_normalized = np.abs(left_filtered) / np.max(np.abs(left_filtered))
 
-    # Find end of left pilot tone
-    start_left_sweep = find_end_of_burst(left_normalized, Fs)
+    # Find end of left pilot tone / start of sweep
+    _, start_left_sweep = find_burst_bounds(left_normalized, Fs)
+
+    if params['sweep_start_detect'] == 1:
+        sample_offset = start_left_sweep + Fs
+        start_left_sweep, _ = sample_offset + find_burst_bounds(left_normalized[sample_offset:], Fs)
+
     logger.info(f"Start of Left Sweep: {start_left_sweep}")
 
     # Filter and maximize for end of right pilot detection
-    right_filtered = apply_bandpass(right, 500, 2000, Fs)
+    right_filtered = apply_filter(right, 500, 2000, Fs, btype='band')
     right_normalized = np.abs(right_filtered) / np.max(np.abs(right_filtered))
 
-    # Find end of left pilot tone
+    # Find end of left pilot tone / start of sweep
     sample_offset = start_left_sweep + int(Fs * params['sweep_offset'])
-    start_right_sweep = sample_offset + find_end_of_burst(right_normalized[sample_offset:], Fs)
+    _, start_right_sweep = sample_offset + find_burst_bounds(right_normalized[sample_offset:], Fs)
+
+    if params['sweep_start_detect'] == 1:
+        sample_offset = start_right_sweep + Fs
+        start_right_sweep, _ = sample_offset + find_burst_bounds(right_normalized[sample_offset:], Fs)
+
     logger.info(f"Start of Right Sweep: {start_right_sweep}")
 
     # Filter and maximize for end of left sweep detection
-    left_filtered = apply_bandpass(left, 10000, 40000, Fs)
+    left_filtered = apply_filter(left, None, 10000, Fs, btype='high')
     left_normalized = np.abs(left_filtered) / np.max(np.abs(left_filtered))
 
     # Find end of left sweep
@@ -210,7 +225,7 @@ def slice_audio(input_file, test_record):
     logger.info(f"End of Left Sweep: {end_left_sweep}")
 
     # Filter and maximize for end of right sweep detection
-    right_filtered = apply_bandpass(right, 10000, 40000, Fs)
+    right_filtered = apply_filter(right, None, 10000, Fs, btype='high')
     right_normalized = np.abs(right_filtered) / np.max(np.abs(right_filtered))
 
     # Find end of right sweep
@@ -224,7 +239,6 @@ def slice_audio(input_file, test_record):
         plot_signal(left[start_left_sweep:end_left_sweep], Fs, title="Left Sweep Segment")
         plot_signal(right[start_right_sweep:end_right_sweep], Fs, title="Right Sweep Segment")
 
-    
     # Write results
     output_file_left = os.path.splitext(input_file)[0] + '_L.wav'
     output_file_right = os.path.splitext(input_file)[0] + '_R.wav'
