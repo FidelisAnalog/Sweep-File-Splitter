@@ -191,8 +191,8 @@ def slice_audio(input_file, test_record):
 
     logger.info(f"Test Record: {test_record}")
 
-    lower_border = int(Fs/2400) #=40@96k - have to scale with Fs
-    upper_border = int(Fs/1920) #=50@96k
+    lower_border = int(Fs/2040) # 1020Hz - have to scale with Fs
+    upper_border = int(Fs/1960) # 980Hz
 
     # Filter and maximize for end of left pilot detection
     left_filtered = apply_filter(left, 500, 2000, Fs, btype='band')
