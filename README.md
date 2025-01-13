@@ -24,7 +24,7 @@ pip install numpy scipy matplotlib
 ```
 
 ## Usage
-Input Parameters
+Input Parameters need to be edited in the "# User Parameters" section of the script:
  - INPUT_FILE: Path to the stereo WAV file to be processed.
  - TEST_RECORD: Specifies the test record type. Options are:
     - TRS1007
