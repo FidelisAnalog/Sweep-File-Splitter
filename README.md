@@ -78,7 +78,7 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 #### Examples
 <br/>
 <div align="center" style="padding: 20px 0;">
-    <img src="images/Figure_1.png" alt="Example Plot.">
+    <img src="images/Figure_1.png" alt="Figure 1 - First Burst Detection Pass: Left Channel">
     <p><b>Figure 1 - First Burst Detection Pass: Left Channel</b></p>
     <p>Used to find the end of the first 1kHz pilot tone. In most cases this is also the start of the sweep.</p>
 </div>
@@ -86,7 +86,7 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 
 <br/>
 <div align="center" style="padding: 20px 0;">
-    <img src="images/Figure_2.png" alt="Example Plot.">
+    <img src="images/Figure_2.png" alt="Figure 2 - Optional Sweep Start Detection Pass: Left Channel">
     <p><b>Figure 2 - Optional Sweep Start Detection Pass: Left Channel</b></p>
     <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep. This detection window begins one second after the detected end of the pilot tone.</p>
 </div>
@@ -94,7 +94,7 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 
 <br/>
 <div align="center" style="padding: 20px 0;">
-    <img src="images/Figure_3.png" alt="Example Plot.">
+    <img src="images/Figure_3.png" alt="Figure 3 - Second Burst Detection Pass: Right Channel">
     <p><b>Figure 3 - Second Burst Detection Pass: Right Channel</b></p>
     <p>Used to find the end of the second 1kHz pilot tone. In most cases this is also the start of the sweep. The start of this detection window is however many seconds "sweep_offset" is configured for from the end of the first pilot tone.</p>
 </div>
@@ -102,7 +102,7 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 
 <br/>
 <div align="center" style="padding: 20px 0;">
-    <img src="images/Figure_4.png" alt="Example Plot.">
+    <img src="images/Figure_4.png" alt="Figure 4 - Optional Sweep Start Detection Pass: Right Channel">
     <p><b>Figure 4 - Optional Sweep Start Detection Pass: Right Channel</b></p>
     <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep. This detection window begins one second after the detected end of the second pilot tone.</p>
 </div>
@@ -123,17 +123,17 @@ Purpose: This visualization ensures the end-of-sweep detection algorithm identif
 #### Examples
 <br/>
 <div align="center" style="padding: 20px 0;">
-    <img src="images/Figure_5.png" alt="Example Plot.">
+    <img src="images/Figure_5.png" alt="Figure 5 - First End of Sweep Detection Pass: Left Channel">
     <p><b>Figure 5 - First End of Sweep Detection Pass: Left Channel</b></p>
-    <p>Used to find the end of the left channel sweep.  The distance and duration of this detection window are set by the variables "seep_end_min" and "sweep_end_max".</p>
+    <p>Used to find the end of the left channel sweep.  The distance and duration of this detection window are set by the variables "sweep_end_min" and "sweep_end_max".</p>
 </div>
 <br/>
 
 <br/>
 <div align="center" style="padding: 20px 0;">
-    <img src="images/Figure_5.png" alt="Example Plot.">
-    <p><b>Figure 5 - First End of Sweep Detection Pass: Right Channel</b></p>
-    <p>Used to find the end of the right channel sweep.  The distance and duration of this detection window are set by the variables "seep_end_min" and "sweep_end_max".</p>
+    <img src="images/Figure_6.png" alt="Figure 6 - First End of Sweep Detection Pass: Right Channel">
+    <p><b>Figure 6 - First End of Sweep Detection Pass: Right Channel</b></p>
+    <p>Used to find the end of the right channel sweep.  The distance and duration of this detection window are set by the variables "sweep_end_min" and "sweep_end_max".</p>
 </div>
 <br/>
 
@@ -148,13 +148,22 @@ Key Features:
 
 Purpose: This visualization allows you to verify that the extracted segments correspond to the expected sweep regions.
 
+#### Examples
+<br/>
+<div align="center" style="padding: 20px 0;">
+    <img src="images/Figure_7.png" alt="Figure 7 - Extracted Sweep Segment: Left Channel">
+    <p><b>Figure 7 - Extracted Sweep Segment: Left Channel</b></p>
+    <p>This is a waveform visualization of the extracted sweep segment for the left channel.</p>
+</div>
+<br/>
 
-### Example
-Process the WAV file example.wav with the TRS1007 test record:
-
-INPUT_FILE = 'example.wav'
-TEST_RECORD = 'TRS1007'
-Run the script, and the output WAV files will be saved in the same directory.
+<br/>
+<div align="center" style="padding: 20px 0;">
+    <img src="images/Figure_8.png" alt="Figure 8 - Extracted Sweep Segment: Right Channel">
+    <p><b>Figure 8 - Extracted Sweep Segment: Right Channel</b></p>
+    <p>This is a waveform visualization of the extracted sweep segment for the reft channel.</p>
+</div>
+<br/>
 
 ## Contributing
 Contributions to improve the script are welcome. Please feel free to fork the repository, make your changes, and submit a pull request.
