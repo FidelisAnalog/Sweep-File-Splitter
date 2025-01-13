@@ -121,6 +121,8 @@ def find_burst_bounds(signal, Fs, lower_border, upper_border, consecutive_in_bor
 
     end_sample = is_ + burst_end
 
+	logger.debug(f"End Index: {end_sample}")
+
     if logging.getLogger(__name__).isEnabledFor(logging.DEBUG):
         plot_signal(
             signal,
