@@ -80,7 +80,7 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 <br/>
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_1.png" alt="Example Plot.">
-    <p><b>Figure 1 - First Burst Detection Pass</b></p>
+    <p><b>Figure 1 - First Burst Detection Pass - Left Channel</b></p>
     <p>Used to find the end of the first 1kHz pilot tone. In most cases this is also the start of the sweep.</p>
 </div>
 <br/>
@@ -88,8 +88,24 @@ Purpose: This helps confirm that the burst detection algorithm correctly identif
 <br/>
 <div align="center" style="padding: 20px 0;">
     <img src="images/Figure_2.png" alt="Example Plot.">
-    <p><b>Figure 2 - Optional Sweep Start Detection Pass</b></p>
-    <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep.</p>
+    <p><b>Figure 2 - Optional Sweep Start Detection Pass - Left Channel</b></p>
+    <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep. This detection window begins one second after the detected end of the pilot tone.</p>
+</div>
+<br/>
+
+<br/>
+<div align="center" style="padding: 20px 0;">
+    <img src="images/Figure_3.png" alt="Example Plot.">
+    <p><b>Figure 3 - Second Burst Detection Pass - Right Channel</b></p>
+    <p>Used to find the end of the second 1kHz pilot tone. In most cases this is also the start of the sweep. The start of this detection window is however many seconds "sweep_offset" is configured for from the end of the first pilot tone.</p>
+</div>
+<br/>
+
+<br/>
+<div align="center" style="padding: 20px 0;">
+    <img src="images/Figure_4.png" alt="Example Plot.">
+    <p><b>Figure 4 - Optional Sweep Start Detection Pass - Left Channel</b></p>
+    <p>In cases like JVC TRS-1005 were there is silence between the end of the pilot tone and the start of the sweep, this is used to find the start of the sweep. This detection window begins one second after the detected end of the pilot tone.</p>
 </div>
 <br/>
 
