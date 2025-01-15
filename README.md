@@ -3,6 +3,8 @@
 ## Overview
 This script processes a stereo audio file (WAV format) to detect and extract sweep segments from specific test records.  This stand-alone version has debugging featuers that the version to be integrated with SJPlot will not. 
 
+Much thanks to DrCWO for contrbuting the Scilab code this is based on. 
+
 ## Features
 - Reads stereo WAV files and processes both left and right channels.
 - Detects pilot tones and sweep signals using customizable parameters.
