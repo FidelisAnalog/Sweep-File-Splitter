@@ -4,12 +4,16 @@ from scipy.signal import find_peaks, sosfiltfilt, iirfilter
 from scipy.ndimage import uniform_filter1d
 import os
 import logging
+import argparse
 import matplotlib.pyplot as plt
+
+
+__version__ = "1.0.11"
 
 
 # Configure logging
 logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.INFO)
+logger.setLevel(level=logging.DEBUG)
 fh = logging.StreamHandler()
 fh_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 fh.setFormatter(fh_formatter)
@@ -17,9 +21,19 @@ logger.addHandler(fh)
 logger.propagate = False
 
 
-# User Parameters
-INPUT_FILE = '20241022-T004_V15VMR_47k_305pF_10074A1.wav'
-TEST_RECORD = 'TRS1007'  # Options: TRS1007, TRS1005, STR100
+# Get configuration from command-line arguments
+def get_config():
+
+    # Argument parser setup
+    parser = argparse.ArgumentParser(description="Process parameters for Sweep File Splitter.")
+    parser.add_argument("--file", type=str, help="Path to the input WAV file.", metavar ="")
+    parser.add_argument("--test_record", type=str, help="Test record for extracting sweeps.")
+    parser.add_argument("--no_save", action="store_false", help="Do not save extraced sweep files.")
+    parser.add_argument('--version', action='version', version='Sweep File Splitter ' + __version__)
+    parser.add_argument("--log_level", default='info', type=str, choices=['info', 'debug'], help="Change console logging level to DEBUG.")
+
+    # Parse command-line arguments
+    return vars(parser.parse_args())
 
 
 # Debug signal plots
@@ -107,7 +121,7 @@ def find_burst_bounds(signal, Fs, lower_border, upper_border, consecutive_in_bor
     
     # Define burst region
     is_ = int(start_sample + (1 * Fs))  # Start 1s after the first peak
-    ie = int(start_sample + (12 * Fs))  # End 12s after
+    ie = int(start_sample + (14 * Fs))  # End 14s after
 
     # Extract and smooth burst region
     cut_burst = signal[is_:ie]
@@ -119,7 +133,7 @@ def find_burst_bounds(signal, Fs, lower_border, upper_border, consecutive_in_bor
 
     end_sample = is_ + burst_end
 
-	logger.debug(f"End Index: {end_sample}")
+    logger.debug(f"End Index: {end_sample}")
 
     if logging.getLogger(__name__).isEnabledFor(logging.DEBUG):
         plot_signal(
@@ -155,7 +169,7 @@ def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, 
     end_sample = np.argmax(signal) + sample_offset_start
 
     logger.debug(f"End Sample (Global Index): {end_sample}")
-    logger.debug(f"Sample Offset Start: {sample_offset_start}, Sample Offset End: {sample_offset_end}")
+    logger.debug(f"Sample Offset Start: {sample_offset_start}, End: {sample_offset_end}")
     logger.debug(f"End Sample (Relative Index): {end_sample - sample_offset_start}")
 
     if logging.getLogger(__name__).isEnabledFor(logging.DEBUG):
@@ -171,26 +185,36 @@ def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, 
 
 
 # Main Processing Function
-def slice_audio(input_file, test_record):
+def slice_audio(input_file, test_record, save_files):
     # Test record parameters
     record_params = {
         'TRS1007': {'sweep_offset': 74, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
         'TRS1005': {'sweep_offset': 32, 'sweep_end_min': 26, 'sweep_end_max': 34, 'sweep_start_detect': 1},
         'STR100': {'sweep_offset': 74, 'sweep_end_min': 63, 'sweep_end_max': 67, 'sweep_start_detect': 0},
+        'STR120': {'sweep_offset': 58, 'sweep_end_min': 45, 'sweep_end_max': 50, 'sweep_start_detect': 0},
+        'STR130': {'sweep_offset': 82, 'sweep_end_min': 63, 'sweep_end_max': 67, 'sweep_start_detect': 0},
+        'STR170': {'sweep_offset': 75, 'sweep_end_min': 63, 'sweep_end_max': 67, 'sweep_start_detect': 0},
+        'QR2009': {'sweep_offset': 80, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
+        'QR2010': {'sweep_offset': 24, 'sweep_end_min': 15, 'sweep_end_max': 18, 'sweep_start_detect': 0},
+        'XG7001': {'sweep_offset': 78, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
+        'XG7002': {'sweep_offset': 74, 'sweep_end_min': 26, 'sweep_end_max': 30, 'sweep_start_detect': 1},
+        'XG7005': {'sweep_offset': 78, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
+        'DIN45543': {'sweep_offset': 78, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
+
     }
 
-    if test_record not in record_params:
-        raise ValueError("Invalid test record.")
+	if test_record.upper() not in record_params:
+		raise ValueError("Invalid test record.")
 
-    params = record_params[test_record]
+    params = record_params[test_record.upper()]
 
     # Read input file
     left, right, Fs = read_measurement(input_file)
 
     logger.info(f"Test Record: {test_record}")
 
-    lower_border = int(Fs/2040) # 1020Hz - have to scale with Fs
-    upper_border = int(Fs/1960) # 980Hz
+    lower_border = int(Fs/2040) #=40@96k - have to scale with Fs
+    upper_border = int(Fs/1960) #=50@96k
 
     # Filter and maximize for end of left pilot detection
     left_filtered = apply_filter(left, 500, 2000, Fs, btype='band')
@@ -243,19 +267,32 @@ def slice_audio(input_file, test_record):
         plot_signal(right[start_right_sweep:end_right_sweep], Fs, title="Right Sweep Segment")
 
     # Write results
-    output_file_left = os.path.splitext(input_file)[0] + '_L.wav'
-    output_file_right = os.path.splitext(input_file)[0] + '_R.wav'
+    if save_files == 1:
+        output_file_left = os.path.splitext(input_file)[0] + '_L.wav'
+        output_file_right = os.path.splitext(input_file)[0] + '_R.wav'
 
-    logger.info(f"Writing {output_file_left}")
-    write_result(output_file_left, left, right, Fs, start_left_sweep, end_left_sweep)
+        logger.info(f"Writing {output_file_left}")
+        write_result(output_file_left, left, right, Fs, start_left_sweep, end_left_sweep)
 
-    logger.info(f"Writing {output_file_right}")
-    write_result(output_file_right, right, left, Fs, start_right_sweep, end_right_sweep)
+        logger.info(f"Writing {output_file_right}")
+        write_result(output_file_right, right, left, Fs, start_right_sweep, end_right_sweep)
     
     logger.info("Processing Complete.")
 
 
 # Execute Main Script
 if __name__ == "__main__":
-    slice_audio(INPUT_FILE, TEST_RECORD)
 
+    config = get_config()
+
+    INPUT_FILE = config["file"]
+    TEST_RECORD = config["test_record"]
+    SAVE_FILES = config["no_save"]
+    LOG_LEVEL = config["log_level"]
+
+    if LOG_LEVEL.upper() == 'DEBUG':
+        logger.setLevel(level=logging.DEBUG)
+    if LOG_LEVEL.upper() == 'INFO':
+        logger.setLevel(level=logging.INFO)
+
+    slice_audio(INPUT_FILE, TEST_RECORD, SAVE_FILES)
