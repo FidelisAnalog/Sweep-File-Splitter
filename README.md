@@ -1,4 +1,5 @@
 # Sweep File Splitter
+1.0.11
 
 ## Overview
 This script processes a stereo audio file (WAV format) to detect and extract sweep segments from specific test records.  This stand-alone version has debugging featuers that the version integrated with SJPlot does not. 
