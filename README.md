@@ -1,7 +1,9 @@
 # Sweep File Splitter
 
 ## Overview
-This script processes a stereo audio file (WAV format) to detect and extract sweep segments from specific test records.  This stand-alone version has debugging featuers that the version to be integrated with SJPlot will not. 
+This script processes a stereo audio file (WAV format) to detect and extract sweep segments from specific test records.  This stand-alone version has debugging featuers that the version integrated with SJPlot does not. 
+
+Much thanks to DrCWO for contrbuting the Scilab code this is based on. 
 
 ## Features
 - Reads stereo WAV files and processes both left and right channels.
@@ -26,12 +28,27 @@ pip install numpy scipy matplotlib
 ## Usage
 Input parameters need to be edited in the "# User Parameters" section of the script:
  - INPUT_FILE: Path to the stereo WAV file to be processed.
- - TEST_RECORD: Specifies the test record type. Options are:
-    - TRS1007
-    - TRS1005
-    - STR100
+ - TEST_RECORD: Specifies the test record type. 
 
 Each test record type adjusts parameters such as sweep offset and detection ranges.
+
+## Supported Test Records
+
+| **Test Record** | **Parameter** | **Description** |
+|-----------------|---------------|-----------------|
+| TRS-1007        | `TRS1007`     | JVC/Victor - Frequency Response Test 20Hz-20kHz |
+| CA-TRS-1007     | `TRS1007`     | clearaudio - Frequency Response Test Record 20Hz - 20kHz |
+| TRS-1005        | `TRS1005`     | JVC/Victor - High Frequency Response Test 1kHz - 50kHz |
+| STR-100         | `STR100`      | CBS Laboratories - Professional Test Record (40Hz - 20kHz) |
+| STR-120         | `STR120`      | CBS Laboratories - Wide Range Pickup Test (500Hz - 50kHz) |
+| STR-130         | `STR130`      | CBS Laboratories - RIAA System Response Test (40Hz - 20kHz) |
+| STR-170         | `STR170`      | CBS Laboratories - 318-Microsecond Frequency Response Test (40Hz - 20kHz) |
+| QR 2009         | `QR2009`      | Brüel & Kjær - Stereophonic Gliding Frequency Record 20-20 000 Hz |
+| QR 2010         | `QR2010`      | Brüel & Kjær - Stereo Test Record 5 Hz - 45 kHz |
+| XG-7001         | `XG7001`      | Denon - Denon Technical Test Record (20Hz - 20kHz) |
+| XG-7002         | `XG7002`      | Denon - Denon Audio Technical Test Record - Pick Up Test I (1kHz - 50kHz) |
+| XG-7005         | `XG7005`      | Denon - Denon Audio Technical Test Record - RIAA System Test (20Hz - 20kHz) |
+| DIN 45 543      |  `DIN45543`   | DIN - Frequenzgang - Und Übersprech-Mess-Schallplatte (20Hz - 20kHz) |
 
 ## Running the Script
 Run the script using Python:
