@@ -88,7 +88,7 @@ The script allows customization of the following parameters:
 
 ## Debugging and Visualization
 Signal processing steps can be visualized with plots by enabling logging at the DEBUG level.
-To enable detailed logging, use the `--log_level` argument:
+To enable detailed logging and the visualizations, use the `--log_level` argument:
 
 ```bash
 python splitter.py --file MyFile.wav --test_record STR100 --log_level debug
