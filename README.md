@@ -42,7 +42,7 @@ This scrip uses command-line arguments only.  These arguments are:
 
 Each test record type adjusts parameters such as sweep offset and detection ranges.
 
-## Supported Test Records
+### Supported Test Records
 
 | **Test Record** | **Parameter** | **Description** |
 |-----------------| :---: |-----------------|
