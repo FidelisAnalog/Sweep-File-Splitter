@@ -27,16 +27,25 @@ pip install numpy scipy matplotlib
 ```
 
 ## Usage
-Input parameters need to be edited in the "# User Parameters" section of the script:
- - INPUT_FILE: Path to the stereo WAV file to be processed.
- - TEST_RECORD: Specifies the test record type. 
+This scrip uses command-line arguments only.  These arguments are:
+### Configuration Parameters
+
+| **Parameter**     | **Default** | **Description**                                                   |
+|-----------------| :---: |-------------------------------------------------------------------|
+| file            | |The wave file to extract sweeps from. |
+| test_record     | |The test record the audio was captured from. A list of supported records are in the table below. |
+| save_sweeps     |`True`|`True`: save the extracted sweep files<br>`False`: do not save files |
+| log_level       |`info`|`info`: standard logging level<br>`debug`: verbose logging intended for debugging issues. This also enables the visualizations. |
+| version         | |Command-line only - output sofware version and exit. |
+| help            | |Command-line only - display the help contents and exit. |
+
 
 Each test record type adjusts parameters such as sweep offset and detection ranges.
 
 ## Supported Test Records
 
 | **Test Record** | **Parameter** | **Description** |
-|-----------------|---------------|-----------------|
+|-----------------| :---: |-----------------|
 | TRS-1007        | `TRS1007`     | JVC/Victor - Frequency Response Test 20Hz-20kHz |
 | CA-TRS-1007     | `TRS1007`     | clearaudio - Frequency Response Test Record 20Hz - 20kHz |
 | TRS-1005        | `TRS1005`     | JVC/Victor - High Frequency Response Test 1kHz - 50kHz |
@@ -55,10 +64,14 @@ Each test record type adjusts parameters such as sweep offset and detection rang
 Run the script using Python:
 
 ```bash
-python script_name.py
+python splitter.py --file MyFile.wav --test_record STR100
 ```
 
-Replace script_name.py with the actual name of the script file.
+For file names that have spaces or special characters, you'll need to capture the name in quotes:
+
+```bash
+python splitter.py --file "My Long File Name.wav" --test_record STR100
+```
 
 ## Output Files
 The script generates two output files:
