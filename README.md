@@ -34,7 +34,7 @@ This scrip uses command-line arguments only.  These arguments are:
 |-----------------| :---: |-------------------------------------------------------------------|
 | file            | |The wave file to extract sweeps from. |
 | test_record     | |The test record the audio was captured from. A list of supported records are in the table below. |
-| save_sweeps     |`True`|`True`: save the extracted sweep files<br>`False`: do not save files |
+| no_save         |`False`|`False`: save the extracted sweep files<br>`True`: do not save files |
 | log_level       |`info`|`info`: standard logging level<br>`debug`: verbose logging intended for debugging issues. This also enables the visualizations. |
 | version         | |Command-line only - output sofware version and exit. |
 | help            | |Command-line only - display the help contents and exit. |
