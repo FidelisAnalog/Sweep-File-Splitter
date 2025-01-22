@@ -36,8 +36,8 @@ This scrip uses command-line arguments only.  These arguments are:
 | test_record     | |The test record the audio was captured from. A list of supported records are in the table below. |
 | no_save         |`False`|`False`: save the extracted sweep files<br>`True`: do not save files |
 | log_level       |`info`|`info`: standard logging level<br>`debug`: verbose logging intended for debugging issues. This also enables the visualizations. |
-| version         | |Command-line only - output sofware version and exit. |
-| help            | |Command-line only - display the help contents and exit. |
+| version         | |Output sofware version and exit. |
+| help            | |Display the help contents and exit. |
 
 
 Each test record type adjusts parameters such as sweep offset and detection ranges.
