@@ -8,7 +8,7 @@ import argparse
 import matplotlib.pyplot as plt
 
 
-__version__ = "1.0.11"
+__version__ = "1.0.12"
 
 
 # Configure logging
@@ -200,6 +200,7 @@ def slice_audio(input_file, test_record, save_files):
         'XG7002': {'sweep_offset': 74, 'sweep_end_min': 26, 'sweep_end_max': 30, 'sweep_start_detect': 1},
         'XG7005': {'sweep_offset': 78, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
         'DIN45543': {'sweep_offset': 78, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
+	'ИЗМ33С0327': {'sweep_offset': 58, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
 
     }
 
