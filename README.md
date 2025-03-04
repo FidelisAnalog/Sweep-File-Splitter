@@ -1,5 +1,5 @@
 # Sweep File Splitter
-1.0.11
+1.0.12
 
 ## Overview
 This script processes a stereo audio file (WAV format) to detect and extract sweep segments from specific test records.  This stand-alone version has debugging featuers that the version integrated with SJPlot does not. 
@@ -59,6 +59,7 @@ Each test record type adjusts parameters such as sweep offset and detection rang
 | XG-7002         | `XG7002`      | Denon - Denon Audio Technical Test Record - Pick Up Test I (1kHz - 50kHz) |
 | XG-7005         | `XG7005`      | Denon - Denon Audio Technical Test Record - RIAA System Test (20Hz - 20kHz) |
 | DIN 45 543      |  `DIN45543`   | DIN - Frequenzgang - Und Übersprech-Mess-Schallplatte (20Hz - 20kHz) |
+| ИЗМ33С0327      |  `ИЗМ33С0327` | Пластинка для измерения частотных характеристик, разделения между стереоканалами и чувствительности стереозвукоснимателей | 
 
 ## Running the Script
 Run the script using Python:
