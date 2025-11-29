@@ -142,12 +142,12 @@ Purpose: This confirms detection of the actual sweep start for records like TRS1
 </div>
 <br/>
 
+
 <br/>
 <div align="center" style="padding: 20px 0;">
-    <img src="images/Figure_2_old.png" alt="Figure 2 (old) - Optional Sweep Start Detection Pass: Left Channel">
-    <p><b>Figure 2 (old location) - Second Burst Detection Pass: Right Channel</b></p>
-    <p><b>Figure 2 (old location) - Second Burst Detection Pass: Right Channel</b></p>
-    <p>Used to find the end of the second 1kHz pilot tone. In most cases this is also the start of the sweep. The start of this detection window is offset by "sweep_offset" seconds from the end of the first pilot tone.</p>
+    <img src="images/Figure_3.png" alt="Figure 3 - Second Burst Detection Pass: Right Channel">
+    <p><b>Figure 3 - Second Burst Detection Pass: Right Channel</b></p>
+    <p>Used to find the end of the second 1kHz pilot tone. In most cases this is also the start of the sweep.</p>
 </div>
 <br/>
 
