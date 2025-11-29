@@ -8,7 +8,7 @@ import argparse
 import matplotlib.pyplot as plt
 
 
-__version__ = "2.0.0"
+__version__ = "1.1.0"
 
 
 # Configure logging
