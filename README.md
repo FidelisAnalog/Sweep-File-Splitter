@@ -221,7 +221,7 @@ Purpose: This visualization allows you to verify that the extracted segments cor
 
 ### Version 1.1.0 Algorithm Improvements
 
-**Pilot Tone Detection (find_burst_bounds_hilbert)**
+**Pilot Tone Detection (find_burst_bounds)**
 - Uses Hilbert transform to extract smooth amplitude envelope from bandpass-filtered 1kHz signal
 - Searches first 20 seconds of each channel
 - Detects sustained tone regions above 30% threshold with minimum 1-second duration
@@ -233,7 +233,7 @@ Purpose: This visualization allows you to verify that the extracted segments cor
 - Searches 10 seconds starting 1 second after pilot tone ends
 - Uses Hilbert envelope with 200ms smoothing to track energy trends
 
-**Sweep End Detection (find_end_of_sweep_hilbert)**
+**Sweep End Detection (find_end_of_sweep)**
 - Automatically works for sweeps ending 10kHz-75kHz without configuration
 - Uses 5kHz highpass filter - catches energy drop regardless of sweep end frequency
 - Searches within configured sweep_end_min to sweep_end_max time window (typically 4 seconds)
