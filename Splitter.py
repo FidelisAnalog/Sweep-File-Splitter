@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.io.wavfile import read, write
-from scipy.signal import find_peaks, sosfiltfilt, iirfilter, hilbert, butter
+from scipy.signal import sosfiltfilt, hilbert, butter
 from scipy.ndimage import uniform_filter1d
 import os
 import logging
