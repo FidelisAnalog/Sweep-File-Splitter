@@ -102,7 +102,7 @@ def find_burst_bounds(signal, Fs, tone_freq=1000, min_duration=1.0, threshold=0.
     - tone_freq: expected pilot tone frequency (default 1000 Hz)
     - min_duration: minimum duration in seconds for valid burst (default 1.0s)
     - threshold: normalized envelope threshold (default 0.3 = 30% of peak)
-    - search_duration: duration to search in seconds (default 20s)
+    - search_duration: duration to search in seconds (default 30s)
     
     Returns:
     - start_sample: sample index where burst starts
@@ -139,9 +139,18 @@ def find_burst_bounds(signal, Fs, tone_freq=1000, min_duration=1.0, threshold=0.
     starts = np.where(transitions == 1)[0]
     ends = np.where(transitions == -1)[0]
     
+    # Handle edge cases: signal starts or ends above threshold
+    if above_threshold[0]:
+        # Signal starts above threshold - prepend 0 to starts
+        starts = np.concatenate(([0], starts))
+
+    #if above_threshold[-1]:
+    #    # Signal ends above threshold - append length to ends
+    #    ends = np.concatenate((ends, [len(above_threshold)]))
+
     # Find first sustained region above threshold
     min_samples = int(min_duration * Fs)
-    
+
     for start, end in zip(starts, ends):
         duration = end - start
         if duration >= min_samples:
@@ -163,7 +172,7 @@ def find_burst_bounds(signal, Fs, tone_freq=1000, min_duration=1.0, threshold=0.
     raise ValueError(f"No sustained pilot tone found in first {search_duration}s (min duration: {min_duration}s, threshold: {threshold})")
 
 
-def find_sweep_start(signal, Fs, search_duration=20.0, threshold=0.2):
+def find_sweep_start(signal, Fs, search_duration=10.0, threshold=0.2):
     """
     Find the start of a frequency sweep (rising energy), not a sustained tone.
     Used for test records where sweep starts several seconds after pilot tone ends.
@@ -258,11 +267,11 @@ def find_end_of_sweep(sweep_start_sample, sweep_end_min, sweep_end_max, signal, 
     
     # Fast smoothing with smaller window for better time resolution
     window_size = int(0.01 * Fs)  # 10ms window
-    envelope_smooth = uniform_filter1d(envelope, size=window_size, mode='nearest')
-    
+    envelope_smooth = uniform_filter1d(envelope, size=window_size, mode='nearest', origin=-window_size//2)
+
     # Normalize
     envelope_norm = envelope_smooth / np.max(envelope_smooth)
-    
+
     # Find where envelope drops below threshold
     below_threshold = envelope_norm < threshold
     
@@ -315,7 +324,7 @@ def slice_audio(input_file, test_record, save_files):
     record_params = {
         'TRS1007': {'sweep_offset': 78, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
         'TRS1005': {'sweep_offset': 32, 'sweep_end_min': 26, 'sweep_end_max': 34, 'sweep_start_detect': 1},
-        'STR100': {'sweep_offset': 74, 'sweep_end_min': 63, 'sweep_end_max': 67, 'sweep_start_detect': 0},
+        'STR100': {'sweep_offset': 74, 'sweep_end_min': 64, 'sweep_end_max': 66, 'sweep_start_detect': 0},
         'STR120': {'sweep_offset': 56, 'sweep_end_min': 45, 'sweep_end_max': 50, 'sweep_start_detect': 0},
         'STR130': {'sweep_offset': 80, 'sweep_end_min': 63, 'sweep_end_max': 67, 'sweep_start_detect': 0},
         'STR170': {'sweep_offset': 72, 'sweep_end_min': 63, 'sweep_end_max': 67, 'sweep_start_detect': 0},
@@ -326,6 +335,7 @@ def slice_audio(input_file, test_record, save_files):
         'XG7005': {'sweep_offset': 76, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
         'DIN45543': {'sweep_offset': 78, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
         'ИЗМ33С0327': {'sweep_offset': 58, 'sweep_end_min': 48, 'sweep_end_max': 52, 'sweep_start_detect': 0},
+        'SFC-TR100': {'sweep_offset': 80, 'sweep_end_min': 43, 'sweep_end_max': 47, 'sweep_start_detect': 0},
 
     }
 
